@@ -24,8 +24,6 @@ def the_great_processor(folder):
             file1.write(item)
             file1.write("\n")
 
-    # file1.close()
-    # file2.close()
 
 
 the_great_processor(base_folder)
