@@ -1,9 +1,10 @@
 import os
 
+# ask the user for the full path of the folder that needs listing
 user_folder = input("Enter the full folder path: ")
 base_folder = user_folder
-file_cnt = 0
-folder_cnt = 0
+file_cnt = 0  # setting the file counter to 0
+folder_cnt = 0  # setting the folder counter to 0
 
 
 def the_great_processor(folder):
@@ -23,7 +24,6 @@ def the_great_processor(folder):
             file_cnt = file_cnt + 1
             file1.write(item)
             file1.write("\n")
-
 
 
 the_great_processor(base_folder)
