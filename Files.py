@@ -1,4 +1,5 @@
 import os
+import datetime
 
 # ask the user for the full path of the folder that needs listing
 user_folder = input("Enter the full folder path: ")
@@ -7,6 +8,16 @@ file_cnt = 0  # setting the file counter to 0
 folder_cnt = 0  # setting the folder counter to 0
 
 
+def logger_dec(fn):
+
+    def inner(*args, **kwargs):
+        time = datetime.datetime.now()
+        fn(*args, **kwargs)
+        print("{0} has processed on {1}".format(args, time))
+    return inner
+
+
+@logger_dec
 def the_great_processor(folder):
     global file1, file2, file_cnt, folder_cnt
     file1 = open("logfile_file.txt", "a")  # append mode
@@ -28,10 +39,25 @@ def the_great_processor(folder):
 
 the_great_processor(base_folder)
 
+
 file1.close()
 file2.close()
 
-print ("{0} folders, and {1} files were found".format(folder_cnt, file_cnt))
+print("{0} folders, and {1} files were found".format(folder_cnt, file_cnt))
+
+# listed_files = open("logfile_file.txt", "r")
+# for lines in listed_files:
+#     the_great_mover(lines)
+#
+#
+# def the_great_mover(file_path):
+#     mod_time = os.path.getmtime(file_path)
+#     # mod_time_formated = mod_time.strftime("%d-%b-%Y")
+#     print(mod_time)
+#
+
+
+
 
 
 
