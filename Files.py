@@ -87,11 +87,11 @@ elif user_response.upper() == "Y":
         print(full_file_path, " ",  mod_time)
         if os.path.exists(os.path.join(user_folder, mod_time)):
             # shutil.move(full_file_path, os.path.join(user_folder, mod_time))
-            shutil.copy(full_file_path, os.path.join(user_folder, mod_time))
+            shutil.copy2(full_file_path, os.path.join(user_folder, mod_time))
         else:
             os.mkdir(os.path.join(user_folder, mod_time))
             # shutil.move(full_file_path, os.path.join(user_folder, mod_time))
-            shutil.copy(full_file_path, os.path.join(user_folder, mod_time))
+            shutil.copy2(full_file_path, os.path.join(user_folder, mod_time))
 
 
 file_list.close()
