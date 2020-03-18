@@ -13,6 +13,12 @@ file_cnt = 0  # setting the file counter to 0
 folder_cnt = 0  # setting the folder counter to 0
 
 
+def the_file_cleaner(file2delete):
+    os.remove(file2delete)
+
+
+
+
 def the_cleaner():
     folder_list = open("logfile_folder.txt", "r")  # read mode
     for flines in folder_list:
@@ -88,12 +94,14 @@ elif user_response.upper() == "Y":
         if os.path.exists(os.path.join(user_folder, mod_time)):
             # shutil.move(full_file_path, os.path.join(user_folder, mod_time))
             shutil.copy2(full_file_path, os.path.join(user_folder, mod_time))
+            the_file_cleaner(full_file_path)
         else:
             os.mkdir(os.path.join(user_folder, mod_time))
             # shutil.move(full_file_path, os.path.join(user_folder, mod_time))
             shutil.copy2(full_file_path, os.path.join(user_folder, mod_time))
+            the_file_cleaner(full_file_path)
 
 
 file_list.close()
-# the_cleaner()
+the_cleaner()
 
