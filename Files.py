@@ -2,6 +2,21 @@ import os
 import datetime
 import shutil
 
+
+def logger_dec(fn):
+
+    def inner(*args, **kwargs):
+        time = datetime.datetime.now()
+        fn(*args, **kwargs)
+        print("\n")
+        print("######################")
+        print("{0} function was called to process {1} on {2}".format(str(fn.__name__).upper(), args, time))
+        print("######################")
+
+    return inner
+
+
+
 #TODO change the log file names
 #TODO cleanup old folder
 
@@ -13,42 +28,39 @@ file_cnt = 0  # setting the file counter to 0
 folder_cnt = 0  # setting the folder counter to 0
 
 
+@logger_dec
 def the_file_cleaner(file2delete):
     os.remove(file2delete)
 
+@logger_dec
+def the_folder_cleaner(folder_name):
+    try:
+        os.removedirs(folder_name)
+    except (FileNotFoundError, OSError):
+        pass
 
 
-
-def the_cleaner():
+@logger_dec
+def the_folder_name_cleaner():
     folder_list = open("logfile_folder.txt", "r")  # read mode
     for flines in folder_list:
         folder_n = (os.path.split(flines)[-1][:-1])
         folder_par = (os.path.split(flines))[0]
-        print("***" * 10)
-        print(folder_n, " ", folder_par)
+        # print("***" * 10)
+        # print(folder_n, " ", folder_par)
         folder2delete = os.path.join(folder_par, folder_n)
-        print(folder2delete)
+        # print(folder2delete)
+        the_folder_cleaner(folder2delete)
         # print(flines)
         # print(os.path.join(folder_n, folder_par))
         # print(os.path.isdir(os.path.join(folder_n, folder_par)))
         # print(flines)
         # print(folder_n)
         # print(folder_par)
-        try:
-            os.removedirs(folder2delete)
-        except FileNotFoundError:
-            pass
 
 
 
 
-def logger_dec(fn):
-
-    def inner(*args, **kwargs):
-        time = datetime.datetime.now()
-        fn(*args, **kwargs)
-        print("{0} has processed on {1}".format(args, time))
-    return inner
 
 
 
@@ -103,5 +115,5 @@ elif user_response.upper() == "Y":
 
 
 file_list.close()
-the_cleaner()
+the_folder_name_cleaner()
 
