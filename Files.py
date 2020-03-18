@@ -8,9 +8,12 @@ def logger_dec(fn):
     def inner(*args, **kwargs):
         time = datetime.datetime.now()
         fn(*args, **kwargs)
-        print("{0} function was called to process {1} on {2}".format(str(fn.__name__).upper(), args, time))
-        print("########################################################################################")
-
+        logs = open("logs.txt", "a")  # append mode
+        logs.write("\n")
+        logs.write("{0} function was called to process {1} on {2}".format(str(fn.__name__).upper(), args, time))
+        logs.write("\n")
+        logs.write("########################################################################################")
+        logs.write("\n")
     return inner
 
 
