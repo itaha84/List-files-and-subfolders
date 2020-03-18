@@ -8,10 +8,8 @@ def logger_dec(fn):
     def inner(*args, **kwargs):
         time = datetime.datetime.now()
         fn(*args, **kwargs)
-        print("\n")
-        print("######################")
         print("{0} function was called to process {1} on {2}".format(str(fn.__name__).upper(), args, time))
-        print("######################")
+        print("########################################################################################")
 
     return inner
 
@@ -102,7 +100,6 @@ elif user_response.upper() == "Y":
         folder_n = os.path.dirname(lines)
         full_file_path = os.path.join(folder_n, file_n)
         mod_time = datetime.date.strftime(datetime.date.fromtimestamp(os.path.getmtime(full_file_path)), "%d-%b-%Y")
-        print(full_file_path, " ",  mod_time)
         if os.path.exists(os.path.join(user_folder, mod_time)):
             # shutil.move(full_file_path, os.path.join(user_folder, mod_time))
             shutil.copy2(full_file_path, os.path.join(user_folder, mod_time))
