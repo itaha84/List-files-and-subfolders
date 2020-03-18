@@ -13,6 +13,29 @@ file_cnt = 0  # setting the file counter to 0
 folder_cnt = 0  # setting the folder counter to 0
 
 
+def the_cleaner():
+    folder_list = open("logfile_folder.txt", "r")  # read mode
+    for flines in folder_list:
+        folder_n = (os.path.split(flines)[-1][:-1])
+        folder_par = (os.path.split(flines))[0]
+        print("***" * 10)
+        print(folder_n, " ", folder_par)
+        folder2delete = os.path.join(folder_par, folder_n)
+        print(folder2delete)
+        # print(flines)
+        # print(os.path.join(folder_n, folder_par))
+        # print(os.path.isdir(os.path.join(folder_n, folder_par)))
+        # print(flines)
+        # print(folder_n)
+        # print(folder_par)
+        try:
+            os.removedirs(folder2delete)
+        except FileNotFoundError:
+            pass
+
+
+
+
 def logger_dec(fn):
 
     def inner(*args, **kwargs):
@@ -63,37 +86,14 @@ elif user_response.upper() == "Y":
         mod_time = datetime.date.strftime(datetime.date.fromtimestamp(os.path.getmtime(full_file_path)), "%d-%b-%Y")
         print(full_file_path, " ",  mod_time)
         if os.path.exists(os.path.join(user_folder, mod_time)):
-            pass
+            # shutil.move(full_file_path, os.path.join(user_folder, mod_time))
+            shutil.copy(full_file_path, os.path.join(user_folder, mod_time))
         else:
             os.mkdir(os.path.join(user_folder, mod_time))
-
-        shutil.move(full_file_path, os.path.join(user_folder, mod_time))
-    file_list.close()
-
+            # shutil.move(full_file_path, os.path.join(user_folder, mod_time))
+            shutil.copy(full_file_path, os.path.join(user_folder, mod_time))
 
 
-# folder_list = open("logfile_folder.txt", "r")  # read mode
-# for flines in folder_list:
-#     folder_n = (os.path.split(flines)[-1][:-1])
-#     folder_par = (os.path.split())[0]
-#     os.removedirs(os.path.join(folder_n,folder_par)
-# folder_list.close()
-
-
-
-# listed_files = open("logfile_file.txt", "r")
-# for lines in listed_files:
-#     the_great_mover(lines)
-#
-#
-# def the_great_mover(file_path):
-#     mod_time = os.path.getmtime(file_path)
-#     mod_time_formated = mod_time.strftime("%d-%b-%Y")
-#     print(mod_time)
-#
-
-
-
-
-
+file_list.close()
+# the_cleaner()
 
