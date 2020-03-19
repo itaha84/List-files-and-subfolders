@@ -3,12 +3,13 @@ import datetime
 import shutil
 # 18/03/2020 3:50PM
 
+
 def logger_dec(fn):
 
     def inner(*args, **kwargs):
         time = datetime.datetime.now()
         fn(*args, **kwargs)
-        logs = open("logs.txt", "a")  # append mode
+        logs = open(str(log_name_tail + "_logs.txt"), "a")  # append mode
         logs.write("\n")
         logs.write("{0} function was called to process {1} on {2}".format(str(fn.__name__).upper(), args, time))
         logs.write("\n")
@@ -19,7 +20,7 @@ def logger_dec(fn):
 
 
 #TODO change the log file names
-#TODO cleanup old folder
+#TODO create log files based on the datetiem of the procees
 
 
 # ask the user for the full path of the folder that needs listing
@@ -33,6 +34,7 @@ folder_cnt = 0  # setting the folder counter to 0
 def the_file_cleaner(file2delete):
     os.remove(file2delete)
 
+
 @logger_dec
 def the_folder_cleaner(folder_name):
     try:
@@ -43,7 +45,7 @@ def the_folder_cleaner(folder_name):
 
 @logger_dec
 def the_folder_name_cleaner():
-    folder_list = open("logfile_folder.txt", "r")  # read mode
+    folder_list = open(file2.name, "r")  # read mode
     for flines in folder_list:
         folder_n = (os.path.split(flines)[-1][:-1])
         folder_par = (os.path.split(flines))[0]
@@ -60,16 +62,12 @@ def the_folder_name_cleaner():
         # print(folder_par)
 
 
-
-
-
-
-
 @logger_dec
 def the_great_processor(folder):
-    global file1, file2, file_cnt, folder_cnt
-    file1 = open("logfile_file.txt", "a")  # append mode
-    file2 = open("logfile_folder.txt", "a")  # append mode
+    global file1, file2, file_cnt, folder_cnt, log_name_tail
+    log_name_tail = datetime.date.strftime(datetime.datetime.now(), "%d-%b-%Y-%H-%M")
+    file1 = open(str(log_name_tail + "_file_log.txt"), "a")  # append mode
+    file2 = open(str(log_name_tail + "_folder_log.txt"), "a")  # append mode
     items_in_folder = os.listdir(folder)
     for item in items_in_folder:
         item = os.path.join(folder, item)
@@ -95,9 +93,11 @@ print("{0} folders, and {1} files were found".format(folder_cnt, file_cnt))
 user_response = input("Do you want to proceed sorting files by modification date? (Y/N) ")
 
 if user_response.upper() == "N":
+    print(file1.name)
+    print(file2.name)
     quit()
 elif user_response.upper() == "Y":
-    file_list = open("logfile_file.txt", "r")  # read mode
+    file_list = open(file1.name, "r")  # read mode
     for lines in file_list:
         file_n = (os.path.split(lines)[-1][:-1])
         folder_n = os.path.dirname(lines)
