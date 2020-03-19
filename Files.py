@@ -19,8 +19,10 @@ def logger_dec(fn):
 
 
 
-#TODO change the log file names
-#TODO create log files based on the datetiem of the procees
+#TODO change the log file names [Done]
+#TODO create log files based on the datetiem of the procees [Done]
+#TODO create folder log to contain all logs
+#TODO implement file & folder ID and log the length of each file/folder name in a separate log file
 
 
 # ask the user for the full path of the folder that needs listing
