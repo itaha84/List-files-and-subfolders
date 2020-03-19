@@ -23,7 +23,8 @@ def logger_dec(fn):
 #TODO create log files based on the datetiem of the procees [Done]
 #TODO create folder log to contain all logs
 #TODO implement file & folder ID and log the length of each file/folder name in a separate log file
-
+#TODO log any exceptionss
+#TODO log the folders created (name,path, date, order)
 
 # ask the user for the full path of the folder that needs listing
 user_folder = input("Enter the full folder path: ")
@@ -41,7 +42,19 @@ def the_file_cleaner(file2delete):
 def the_folder_cleaner(folder_name):
     try:
         os.removedirs(folder_name)
-    except (FileNotFoundError, OSError):
+    except FileNotFoundError:
+        exception_logs = open(str(log_name_tail + "_exception_logs.txt"), "a")  # append mode
+        exception_logs.write(folder_name)
+        exception_logs.write("\n")
+        exception_logs.write(str(FileNotFoundError))
+        exception_logs.write("\n")
+        pass
+    except OSError:
+        exception_logs = open(str(log_name_tail + "_exception_logs.txt"), "a")  # append mode
+        exception_logs.write(folder_name)
+        exception_logs.write("\n")
+        exception_logs.write(str(OSError))
+        exception_logs.write("\n")
         pass
 
 
@@ -105,13 +118,20 @@ elif user_response.upper() == "Y":
         folder_n = os.path.dirname(lines)
         full_file_path = os.path.join(folder_n, file_n)
         mod_time = datetime.date.strftime(datetime.date.fromtimestamp(os.path.getmtime(full_file_path)), "%d-%b-%Y")
+        folder_creation_logs = open(str(log_name_tail + "_folder_creation_logs.txt"), "a")  # append mode
         if os.path.exists(os.path.join(user_folder, mod_time)):
-            # shutil.move(full_file_path, os.path.join(user_folder, mod_time))
+            folder_creation_logs.write(os.path.join(user_folder, mod_time))
+            folder_creation_logs.write("\n")
+            folder_creation_logs.write("already existed on {0}".format(datetime.datetime.now()))
+            folder_creation_logs.write("\n")
             shutil.copy2(full_file_path, os.path.join(user_folder, mod_time))
             the_file_cleaner(full_file_path)
         else:
             os.mkdir(os.path.join(user_folder, mod_time))
-            # shutil.move(full_file_path, os.path.join(user_folder, mod_time))
+            folder_creation_logs.write(os.path.join(user_folder, mod_time))
+            folder_creation_logs.write("\n")
+            folder_creation_logs.write("created on {0}".format(datetime.datetime.now()))
+            folder_creation_logs.write("\n")
             shutil.copy2(full_file_path, os.path.join(user_folder, mod_time))
             the_file_cleaner(full_file_path)
 
