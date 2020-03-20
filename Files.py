@@ -1,11 +1,12 @@
 import os
 import datetime
 import shutil
+
+
 # 18/03/2020 3:50PM
 
 
 def logger_dec(fn):
-
     def inner(*args, **kwargs):
         time = datetime.datetime.now()
         fn(*args, **kwargs)
@@ -15,16 +16,16 @@ def logger_dec(fn):
         logs.write("\n")
         logs.write("########################################################################################")
         logs.write("\n")
+
     return inner
 
 
-
-#TODO change the log file names [Done]
-#TODO create log files based on the datetiem of the procees [Done]
-#TODO create folder log to contain all logs
-#TODO implement file & folder ID and log the length of each file/folder name in a separate log file
-#TODO log any exceptionss
-#TODO log the folders created (name,path, date, order)
+# TODO change the log file names [Done]
+# TODO create log files based on the datetiem of the procees [Done]
+# TODO create folder log to contain all logs
+# TODO implement file & folder ID and log the length of each file/folder name in a separate log file
+# TODO log any exceptionss
+# TODO log the folders created (name,path, date, order)
 
 # ask the user for the full path of the folder that needs listing
 user_folder = input("Enter the full folder path: ")
@@ -87,10 +88,10 @@ def the_great_processor(folder):
     for item in items_in_folder:
         item = os.path.join(folder, item)
         if os.path.isdir(item):
-           folder_cnt = folder_cnt + 1
-           the_great_processor(item)
-           file2.write(item)
-           file2.write("\n")
+            folder_cnt = folder_cnt + 1
+            the_great_processor(item)
+            file2.write(item)
+            file2.write("\n")
 
         if os.path.isfile(item):
             file_cnt = file_cnt + 1
@@ -100,7 +101,6 @@ def the_great_processor(folder):
 
 the_great_processor(base_folder)
 
-
 file1.close()
 file2.close()
 
@@ -108,8 +108,6 @@ print("{0} folders, and {1} files were found".format(folder_cnt, file_cnt))
 user_response = input("Do you want to proceed sorting files by modification date? (Y/N) ")
 
 if user_response.upper() == "N":
-    print(file1.name)
-    print(file2.name)
     quit()
 elif user_response.upper() == "Y":
     file_list = open(file1.name, "r")  # read mode
@@ -119,23 +117,41 @@ elif user_response.upper() == "Y":
         full_file_path = os.path.join(folder_n, file_n)
         mod_time = datetime.date.strftime(datetime.date.fromtimestamp(os.path.getmtime(full_file_path)), "%d-%b-%Y")
         folder_creation_logs = open(str(log_name_tail + "_folder_creation_logs.txt"), "a")  # append mode
+        files_copy_logs = open(str(log_name_tail + "_file_copy_logs.txt"), "a")  # append mode
+
         if os.path.exists(os.path.join(user_folder, mod_time)):
+
             folder_creation_logs.write(os.path.join(user_folder, mod_time))
             folder_creation_logs.write("\n")
             folder_creation_logs.write("already existed on {0}".format(datetime.datetime.now()))
             folder_creation_logs.write("\n")
             shutil.copy2(full_file_path, os.path.join(user_folder, mod_time))
+            files_copy_logs.write(str(full_file_path))
+            files_copy_logs.write("\n")
+            files_copy_logs.write("Copied from: "+ str(full_file_path))
+            files_copy_logs.write("\n")
+            files_copy_logs.write("Copied to: " + str(os.path.join(user_folder, mod_time)))
+            files_copy_logs.write("\n")
+            files_copy_logs.write("#################################")
+            files_copy_logs.write("\n")
             the_file_cleaner(full_file_path)
         else:
+
             os.mkdir(os.path.join(user_folder, mod_time))
             folder_creation_logs.write(os.path.join(user_folder, mod_time))
             folder_creation_logs.write("\n")
             folder_creation_logs.write("created on {0}".format(datetime.datetime.now()))
             folder_creation_logs.write("\n")
             shutil.copy2(full_file_path, os.path.join(user_folder, mod_time))
+            files_copy_logs.write(str(full_file_path))
+            files_copy_logs.write("\n")
+            files_copy_logs.write("Copied from: "+ str(full_file_path))
+            files_copy_logs.write("\n")
+            files_copy_logs.write("Copied to: " + str(os.path.join(user_folder, mod_time)))
+            files_copy_logs.write("\n")
+            files_copy_logs.write("#################################")
+            files_copy_logs.write("\n")
             the_file_cleaner(full_file_path)
-
 
 file_list.close()
 the_folder_name_cleaner()
-
