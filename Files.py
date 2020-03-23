@@ -7,16 +7,13 @@ import shutil
 
 
 def logger_dec(fn):
+
     def inner(*args, **kwargs):
         time = datetime.datetime.now()
         fn(*args, **kwargs)
-        logs = open(str(log_name_tail + "_logs.txt"), "a")  # append mode
-        logs.write("\n")
-        logs.write("{0} function was called to process {1} on {2}".format(str(fn.__name__).upper(), args, time))
-        logs.write("\n")
-        logs.write("########################################################################################")
-        logs.write("\n")
-
+        logs = open(str(log_name_tag + "_logs.txt"), "a")  # append mode
+        logs.write("{0} ran on {2} to process {1}".format(str(fn.__name__).upper(), args, time) + "\n")
+        logs.write("########################################################################################\n")
     return inner
 
 
@@ -26,12 +23,7 @@ def logger_dec(fn):
 # TODO implement file & folder ID and log the length of each file/folder name in a separate log file
 # TODO log any exceptionss
 # TODO log the folders created (name,path, date, order)
-
-# ask the user for the full path of the folder that needs listing
-user_folder = input("Enter the full folder path: ")
-base_folder = user_folder
-file_cnt = 0  # setting the file counter to 0
-folder_cnt = 0  # setting the folder counter to 0
+#TODO unify the log collector in one funcation
 
 
 @logger_dec
@@ -43,20 +35,19 @@ def the_file_cleaner(file2delete):
 def the_folder_cleaner(folder_name):
     try:
         os.removedirs(folder_name)
+        folder_deletion_logs = open(str(log_name_tag + "_folder_deletion_logs.txt"), "a")  # append mode
+        folder_deletion_logs.write(f"{folder_name}, has been deleted !\n")
     except FileNotFoundError:
-        exception_logs = open(str(log_name_tail + "_exception_logs.txt"), "a")  # append mode
-        exception_logs.write(folder_name)
-        exception_logs.write("\n")
-        exception_logs.write(str(FileNotFoundError))
-        exception_logs.write("\n")
+        exception_logs = open(str(log_name_tag + "_exception_logs.txt"), "a")  # append mode
+        exception_logs.write(folder_name + "\n")
+        exception_logs.write(str(repr(FileNotFoundError)) + "\n")
         pass
     except OSError:
-        exception_logs = open(str(log_name_tail + "_exception_logs.txt"), "a")  # append mode
-        exception_logs.write(folder_name)
-        exception_logs.write("\n")
-        exception_logs.write(str(OSError))
-        exception_logs.write("\n")
+        exception_logs = open(str(log_name_tag + "_exception_logs.txt"), "a")  # append mode
+        exception_logs.write(folder_name + "\n")
+        exception_logs.write(str(repr(OSError)) + "\n")
         pass
+
 
 
 @logger_dec
@@ -65,41 +56,46 @@ def the_folder_name_cleaner():
     for flines in folder_list:
         folder_n = (os.path.split(flines)[-1][:-1])
         folder_par = (os.path.split(flines))[0]
-        # print("***" * 10)
-        # print(folder_n, " ", folder_par)
         folder2delete = os.path.join(folder_par, folder_n)
-        # print(folder2delete)
         the_folder_cleaner(folder2delete)
-        # print(flines)
-        # print(os.path.join(folder_n, folder_par))
-        # print(os.path.isdir(os.path.join(folder_n, folder_par)))
-        # print(flines)
-        # print(folder_n)
-        # print(folder_par)
 
 
 @logger_dec
 def the_great_processor(folder):
-    global file1, file2, file_cnt, folder_cnt, log_name_tail
-    log_name_tail = datetime.date.strftime(datetime.datetime.now(), "%d-%b-%Y-%H-%M")
-    file1 = open(str(log_name_tail + "_file_log.txt"), "a")  # append mode
-    file2 = open(str(log_name_tail + "_folder_log.txt"), "a")  # append mode
+    global file1, file2, file_cnt, folder_cnt, log_name_tag
+    log_name_tag = datetime.date.strftime(datetime.datetime.now(), "%d-%b-%Y-%H-%M")
+    file1 = open(str(log_name_tag + "_file_log.txt"), "a")  # append mode
+    file2 = open(str(log_name_tag + "_folder_log.txt"), "a")  # append mode
     items_in_folder = os.listdir(folder)
     for item in items_in_folder:
         item = os.path.join(folder, item)
         if os.path.isdir(item):
             folder_cnt = folder_cnt + 1
             the_great_processor(item)
-            file2.write(item)
-            file2.write("\n")
+            file2.write(item + "\n")
 
         if os.path.isfile(item):
             file_cnt = file_cnt + 1
-            file1.write(item)
-            file1.write("\n")
+            file1.write(item + "\n")
 
 
-the_great_processor(base_folder)
+# ask the user for the full path of the folder that needs listing
+
+
+user_folder = input("Enter the full folder path: ")
+
+
+if os.path.isdir(user_folder):
+    base_folder = user_folder
+    file_cnt = 0  # setting the file counter to 0
+    folder_cnt = 0  # setting the folder counter to 0
+    the_great_processor(base_folder)
+else:
+    print("Invalid. Please enter a valid path!")
+    quit()
+
+
+
 
 file1.close()
 file2.close()
@@ -116,41 +112,29 @@ elif user_response.upper() == "Y":
         folder_n = os.path.dirname(lines)
         full_file_path = os.path.join(folder_n, file_n)
         mod_time = datetime.date.strftime(datetime.date.fromtimestamp(os.path.getmtime(full_file_path)), "%d-%b-%Y")
-        folder_creation_logs = open(str(log_name_tail + "_folder_creation_logs.txt"), "a")  # append mode
-        files_copy_logs = open(str(log_name_tail + "_file_copy_logs.txt"), "a")  # append mode
+        folder_creation_logs = open(str(log_name_tag + "_folder_creation_logs.txt"), "a")  # append mode
+        files_copy_logs = open(str(log_name_tag + "_file_copy_logs.txt"), "a")  # append mode
 
         if os.path.exists(os.path.join(user_folder, mod_time)):
 
-            folder_creation_logs.write(os.path.join(user_folder, mod_time))
-            folder_creation_logs.write("\n")
-            folder_creation_logs.write("already existed on {0}".format(datetime.datetime.now()))
-            folder_creation_logs.write("\n")
+            folder_creation_logs.write(str(os.path.join(user_folder, mod_time)) + "\n")
+            folder_creation_logs.write("already existed on {0}".format(datetime.datetime.now()) + "\n")
             shutil.copy2(full_file_path, os.path.join(user_folder, mod_time))
-            files_copy_logs.write(str(full_file_path))
-            files_copy_logs.write("\n")
-            files_copy_logs.write("Copied from: "+ str(full_file_path))
-            files_copy_logs.write("\n")
-            files_copy_logs.write("Copied to: " + str(os.path.join(user_folder, mod_time)))
-            files_copy_logs.write("\n")
-            files_copy_logs.write("#################################")
-            files_copy_logs.write("\n")
+            files_copy_logs.write(str(full_file_path) + "\n")
+            files_copy_logs.write("Copied from: " + str(full_file_path) + "\n")
+            files_copy_logs.write("Copied to: " + str(os.path.join(user_folder, mod_time)) + "\n")
+            files_copy_logs.write("#################################\n")
             the_file_cleaner(full_file_path)
         else:
 
             os.mkdir(os.path.join(user_folder, mod_time))
-            folder_creation_logs.write(os.path.join(user_folder, mod_time))
-            folder_creation_logs.write("\n")
-            folder_creation_logs.write("created on {0}".format(datetime.datetime.now()))
-            folder_creation_logs.write("\n")
+            folder_creation_logs.write(os.path.join(user_folder, mod_time) + "\n")
+            folder_creation_logs.write("created on {0}".format(datetime.datetime.now()) + "\n")
             shutil.copy2(full_file_path, os.path.join(user_folder, mod_time))
-            files_copy_logs.write(str(full_file_path))
-            files_copy_logs.write("\n")
-            files_copy_logs.write("Copied from: "+ str(full_file_path))
-            files_copy_logs.write("\n")
-            files_copy_logs.write("Copied to: " + str(os.path.join(user_folder, mod_time)))
-            files_copy_logs.write("\n")
-            files_copy_logs.write("#################################")
-            files_copy_logs.write("\n")
+            files_copy_logs.write(str(full_file_path) + "\n")
+            files_copy_logs.write("Copied from: " + str(full_file_path) + "\n")
+            files_copy_logs.write("Copied to: " + os.path.join(user_folder, mod_time) + "\n")
+            files_copy_logs.write("#################################\n")
             the_file_cleaner(full_file_path)
 
 file_list.close()
